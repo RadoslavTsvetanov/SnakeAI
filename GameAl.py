@@ -7,10 +7,13 @@ from Button import Button
 pygame.init()
 #font = pygame.font.Font('arial.ttf', 25)
 font = pygame.font.SysFont('arial', 25)
-obstacles_list = []
 crash_into_walls = False
 
-Barriers_button = Button
+
+def load_from_file(filename):
+    with open(filename, 'r') as f:
+        for i in f.read():
+            print(i)
 
 
 class Direction(Enum):
@@ -42,16 +45,17 @@ SCROLL_MAX_VALUE = 50  # maximum value of the scroll bar
 
 class SnakeGame:
 
-    def __init__(self, w=840, h=600):
+    def __init__(self, w=840, h=600, load_previous=not True):
         self.w = w
         self.h = h
 
         self.display = pygame.display.set_mode((self.w, self.h))
         pygame.display.set_caption('Snake')
         self.clock = pygame.time.Clock()
-
+        self.load = True
         self.direction = Direction.RIGHT
-
+        self.obstacles_list = self.load_from_file(
+            "arr.txt") if load_previous else []
         self.head = Point(self.w/2, self.h/2)
         self.snake = [self.head,
                       Point(self.head.x-BLOCK_SIZE, self.head.y),
@@ -63,7 +67,8 @@ class SnakeGame:
         self._place_food()
 
     def _place_food(self):
-        x = random.randint(0, (self.w-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
+        x = random.randint(0, (self.w - 200 - BLOCK_SIZE) //
+                           BLOCK_SIZE)*BLOCK_SIZE
         y = random.randint(0, (self.h-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
         self.food = Point(x, y)
         if self.food in self.snake:
@@ -96,13 +101,14 @@ class SnakeGame:
                             mouse_y = i - 20
                             break
                     mouse_pos = (mouse_x, mouse_y)
-                    obstacles_list.append(mouse_pos)
+                    self.obstacles_list.append(mouse_pos)
         self._move(self.direction)  # update the head
         self.snake.insert(0, self.head)
 
         game_over = False
         if self._is_collision():
             # TODO:fix
+            self.save_to_file("arr.txt", self.obstacles_list)
             game_over = True
             return game_over, self.score
 
@@ -111,7 +117,6 @@ class SnakeGame:
             self._place_food()
         else:
             self.snake.pop()
-
         self._update_ui()
         self.clock.tick(SPEED)
 
@@ -123,9 +128,8 @@ class SnakeGame:
                 return True
             self.head = Point(0, 0)
             return False
-        for block in obstacles_list:
+        for block in self.obstacles_list:
             block_object = Point(block[0], block[1])
-            print(self.head == block_object)
             if(self.head == block_object):
                 return True
         if self.head in self.snake[1:]:
@@ -142,11 +146,15 @@ class SnakeGame:
                 pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
             pygame.draw.rect(self.display, BLUE2,
                              pygame.Rect(pt.x+4, pt.y+4, 12, 12))
-        for obstacle in obstacles_list:
-            pygame.draw.rect(self.display, WHITE, pygame.Rect(
-                obstacle[0], obstacle[1], BLOCK_SIZE, BLOCK_SIZE))
-        pygame.draw.rect(self.display, RED, pygame.Rect(
-            self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        print("self.obstacles_list")
+        print(self.obstacles_list)
+        if(len(self.obstacles_list) > 0):
+            print("list not empty")
+            for obstacle in self.obstacles_list:
+                pygame.draw.rect(self.display, WHITE, pygame.Rect(
+                    obstacle[0], obstacle[1], BLOCK_SIZE, BLOCK_SIZE))
+            pygame.draw.rect(self.display, RED, pygame.Rect(
+                self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
 
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])
@@ -165,6 +173,35 @@ class SnakeGame:
             y -= BLOCK_SIZE
 
         self.head = Point(x, y)
+
+    def save_to_file(self, filename, arr):
+        print("saving to file")
+        with open(filename, 'w') as f:
+            for i in arr:
+                f.write(str(i) + '\n')
+
+    def load_from_file(self, filename):
+        coordinates_list = []
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+            for line in lines:
+                print(line)
+                if(line[0] != '\n'):
+                    x = 0
+                    y = 0
+                    for j in range(1, 4, 1):
+                        if(line[j] >= '0' and line[j] <= '9'):
+                            x = x * 10 + int(line[j])
+                            continue
+                        break
+                    for j in range(6, 9, 1):
+                        if(line[j] >= '0' and line[j] <= '9'):
+                            y = y * 10 + int(line[j])
+                            continue
+                        break
+                    coordinates_list.append((x, y))
+        print(coordinates_list)
+        return coordinates_list
 
 
 if __name__ == '__main__':
