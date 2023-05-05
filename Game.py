@@ -2,11 +2,13 @@ import pygame
 import random
 from enum import Enum
 from collections import namedtuple
+import pygame_gui
+from Button import Button
 import numpy as np
-import os
-os.environ['SDL_VIDEO_WINDOW_POS'] = '50,50'
 pygame.init()
+# font = pygame.font.Font('arial.ttf', 25)
 font = pygame.font.SysFont('arial', 25)
+crash_into_walls = False
 
 
 class Direction(Enum):
@@ -30,15 +32,15 @@ SPEED = 40
 
 class SnakeGameAI:
 
-    def __init__(self, w=640, h=480):
+    def __init__(self, w=840, h=600, load_previous=not True):
         self.w = w
         self.h = h
         self.display = pygame.display.set_mode((self.w, self.h))
         pygame.display.set_caption('Snake')
         self.clock = pygame.time.Clock()
-        self.reset()
+        self.reset(load_previous)
 
-    def reset(self):
+    def reset(self, load_previous):
 
         self.direction = Direction.RIGHT
 
@@ -46,11 +48,42 @@ class SnakeGameAI:
         self.snake = [self.head,
                       Point(self.head.x-BLOCK_SIZE, self.head.y),
                       Point(self.head.x-(2*BLOCK_SIZE), self.head.y)]
-
+        self.obstacles_list = self.load_from_file(
+            "arr.txt") if load_previous else []
         self.score = 0
         self.food = None
         self._place_food()
         self.frame_iteration = 0
+        self.Barriers_button = Button(170, 70, self.display, self.w-190, 50)
+
+    def save_to_file(self, filename, arr):
+        print("saving to file")
+        with open(filename, 'w') as f:
+            for i in arr:
+                f.write(str(i) + '\n')
+
+    def load_from_file(self, filename):
+        coordinates_list = []
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+            for line in lines:
+                print(line)
+                if(line[0] != '\n'):
+                    x = 0
+                    y = 0
+                    for j in range(1, 4, 1):
+                        if(line[j] >= '0' and line[j] <= '9'):
+                            x = x * 10 + int(line[j])
+                            continue
+                        break
+                    for j in range(6, 9, 1):
+                        if(line[j] >= '0' and line[j] <= '9'):
+                            y = y * 10 + int(line[j])
+                            continue
+                        break
+                    coordinates_list.append((x, y))
+        print(coordinates_list)
+        return coordinates_list
 
     def _place_food(self):
         x = random.randint(0, (self.w-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
@@ -66,7 +99,19 @@ class SnakeGameAI:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                if(mouse_x < self.w - 200):
+                    for i in range(0, self.w, 20):
+                        if mouse_x < i:
+                            mouse_x = i - 20
+                            break
+                    for i in range(0, self.h, 20):
+                        if mouse_y < i:
+                            mouse_y = i - 20
+                            break
+                    mouse_pos = (mouse_x, mouse_y)
+                    self.obstacles_list.append(mouse_pos)
         self._move(action)
         self.snake.insert(0, self.head)
 
@@ -93,7 +138,14 @@ class SnakeGameAI:
         if pt is None:
             pt = self.head
         if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
-            return True
+            if(crash_into_walls):
+                return True
+            self.head = Point(0, 0)
+            return False
+        for block in self.obstacles_list:
+            block_object = Point(block[0], block[1])
+            if(self.head == block_object):
+                return True
         if pt in self.snake[1:]:
             return True
 
@@ -110,6 +162,15 @@ class SnakeGameAI:
 
         pygame.draw.rect(self.display, RED, pygame.Rect(
             self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        print("self.obstacles_list")
+        print(self.obstacles_list)
+        if(len(self.obstacles_list) > 0):
+            print("list not empty")
+            for obstacle in self.obstacles_list:
+                pygame.draw.rect(self.display, WHITE, pygame.Rect(
+                    obstacle[0], obstacle[1], BLOCK_SIZE, BLOCK_SIZE))
+            pygame.draw.rect(self.display, RED, pygame.Rect(
+                self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
 
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])

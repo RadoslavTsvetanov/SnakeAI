@@ -205,7 +205,7 @@ class SnakeGame:
 
 
 if __name__ == '__main__':
-    game = SnakeGame()
+    game = SnakeGame(load_previous=True)
 
     while True:
         game_over, score = game.play_step()

@@ -117,7 +117,7 @@ def train():
 
         if done:
 
-            game.reset()
+            game.reset(True)
             agent.n_games += 1
             agent.train_long_memory()
 
