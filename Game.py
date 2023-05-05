@@ -67,7 +67,6 @@ class SnakeGameAI:
         with open(filename, 'r') as f:
             lines = f.readlines()
             for line in lines:
-                print(line)
                 if(line[0] != '\n'):
                     x = 0
                     y = 0
@@ -82,7 +81,6 @@ class SnakeGameAI:
                             continue
                         break
                     coordinates_list.append((x, y))
-        print(coordinates_list)
         return coordinates_list
 
     def _place_food(self):
@@ -162,10 +160,7 @@ class SnakeGameAI:
 
         pygame.draw.rect(self.display, RED, pygame.Rect(
             self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
-        print("self.obstacles_list")
-        print(self.obstacles_list)
         if(len(self.obstacles_list) > 0):
-            print("list not empty")
             for obstacle in self.obstacles_list:
                 pygame.draw.rect(self.display, WHITE, pygame.Rect(
                     obstacle[0], obstacle[1], BLOCK_SIZE, BLOCK_SIZE))
