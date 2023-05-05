@@ -3,11 +3,14 @@ import random
 from enum import Enum
 from collections import namedtuple
 import pygame_gui
+from Button import Button
 pygame.init()
 #font = pygame.font.Font('arial.ttf', 25)
 font = pygame.font.SysFont('arial', 25)
 obstacles_list = []
 crash_into_walls = False
+
+Barriers_button = Button
 
 
 class Direction(Enum):
@@ -39,7 +42,7 @@ SCROLL_MAX_VALUE = 50  # maximum value of the scroll bar
 
 class SnakeGame:
 
-    def __init__(self, w=640, h=480):
+    def __init__(self, w=840, h=600):
         self.w = w
         self.h = h
 
@@ -56,17 +59,8 @@ class SnakeGame:
 
         self.score = 0
         self.food = None
+        self.Barriers_button = Button(170, 70, self.display, self.w-190, 50)
         self._place_food()
-
-        self.scroll_value = SPEED  # initial speed value
-
-        # initialize the scroll bar
-        self.scroll_bar = pygame.Rect(
-            SCROLL_POS_X, SCROLL_POS_Y, SCROLL_WIDTH, SCROLL_HEIGHT)
-        self.scroll_bar_pos = (self.scroll_value - SCROLL_MIN_VALUE) / (
-            SCROLL_MAX_VALUE - SCROLL_MIN_VALUE) * (SCROLL_WIDTH - SCROLL_HEIGHT)
-        self.scroll_bar_handle = pygame.Rect(
-            SCROLL_POS_X + self.scroll_bar_pos, SCROLL_POS_Y, SCROLL_HEIGHT, SCROLL_HEIGHT)
 
     def _place_food(self):
         x = random.randint(0, (self.w-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
@@ -92,18 +86,17 @@ class SnakeGame:
                     self.direction = Direction.DOWN
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                print(mouse_x, mouse_y)
-                for i in range(0, self.w, 20):
-                    if mouse_x < i:
-                        mouse_x = i - 20
-                        break
-                for i in range(0, self.h, 20):
-                    if mouse_y < i:
-                        mouse_y = i - 20
-                        break
-                mouse_pos = (mouse_x, mouse_y)
-                obstacles_list.append(mouse_pos)
-                print("Mouse position:", mouse_pos)
+                if(mouse_x < self.w - 200):
+                    for i in range(0, self.w, 20):
+                        if mouse_x < i:
+                            mouse_x = i - 20
+                            break
+                    for i in range(0, self.h, 20):
+                        if mouse_y < i:
+                            mouse_y = i - 20
+                            break
+                    mouse_pos = (mouse_x, mouse_y)
+                    obstacles_list.append(mouse_pos)
         self._move(self.direction)  # update the head
         self.snake.insert(0, self.head)
 
@@ -125,7 +118,7 @@ class SnakeGame:
         return game_over, self.score
 
     def _is_collision(self):
-        if self.head.x > self.w - BLOCK_SIZE or self.head.x < 0 or self.head.y > self.h - BLOCK_SIZE or self.head.y < 0:
+        if self.head.x > self.w - BLOCK_SIZE - 200 or self.head.x < 0 or self.head.y > self.h - BLOCK_SIZE - 200 or self.head.y < 0:
             if(crash_into_walls):
                 return True
             self.head = Point(0, 0)
@@ -142,7 +135,8 @@ class SnakeGame:
 
     def _update_ui(self):
         self.display.fill(BLACK)
-
+        # button for obstacles
+        self.Barriers_button.draw_button()
         for pt in self.snake:
             pygame.draw.rect(self.display, BLUE1, pygame.Rect(
                 pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
