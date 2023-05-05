@@ -6,6 +6,8 @@ import pygame_gui
 pygame.init()
 #font = pygame.font.Font('arial.ttf', 25)
 font = pygame.font.SysFont('arial', 25)
+obstacles_list = []
+crash_into_walls = False
 
 
 class Direction(Enum):
@@ -25,7 +27,7 @@ BLUE2 = (0, 100, 255)
 BLACK = (0, 0, 0)
 
 BLOCK_SIZE = 20
-SPEED = 10
+SPEED = 20
 
 SCROLL_WIDTH = 200  # width of the scroll bar
 SCROLL_HEIGHT = 10  # height of the scroll bar
@@ -33,7 +35,6 @@ SCROLL_POS_X = 440  # x position of the scroll bar
 SCROLL_POS_Y = 10  # y position of the scroll bar
 SCROLL_MIN_VALUE = 1  # minimum value of the scroll bar
 SCROLL_MAX_VALUE = 50  # maximum value of the scroll bar
-user_cliks_arr = []
 
 
 class SnakeGame:
@@ -80,10 +81,6 @@ class SnakeGame:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            if event.type == pygame.MOUSEBUTTONUP:
-                pos = pygame.mouse.get_pos()
-                print(pos)
-                user_cliks_arr.append(pos)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     self.direction = Direction.LEFT
@@ -93,15 +90,27 @@ class SnakeGame:
                     self.direction = Direction.UP
                 elif event.key == pygame.K_DOWN:
                     self.direction = Direction.DOWN
-
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                print(mouse_x, mouse_y)
+                for i in range(0, self.w, 20):
+                    if mouse_x < i:
+                        mouse_x = i - 20
+                        break
+                for i in range(0, self.h, 20):
+                    if mouse_y < i:
+                        mouse_y = i - 20
+                        break
+                mouse_pos = (mouse_x, mouse_y)
+                obstacles_list.append(mouse_pos)
+                print("Mouse position:", mouse_pos)
         self._move(self.direction)  # update the head
         self.snake.insert(0, self.head)
 
         game_over = False
         if self._is_collision():
+            # TODO:fix
             game_over = True
-            self.display = pygame.display.set_mode((self.w, self.h))
-            pygame.display.set_caption('Snake')
             return game_over, self.score
 
         if self.head == self.food:
@@ -117,12 +126,17 @@ class SnakeGame:
 
     def _is_collision(self):
         if self.head.x > self.w - BLOCK_SIZE or self.head.x < 0 or self.head.y > self.h - BLOCK_SIZE or self.head.y < 0:
-            return True
+            if(crash_into_walls):
+                return True
+            self.head = Point(0, 0)
+            return False
+        for block in obstacles_list:
+            block_object = Point(block[0], block[1])
+            print(self.head == block_object)
+            if(self.head == block_object):
+                return True
         if self.head in self.snake[1:]:
             return True
-        for user_click in user_cliks_arr:
-            if((self.head.x >= user_click[0] and self.head.x < user_click[0] + BLOCK_SIZE + 1) and (self.head.y >= user_click[1] and self.head.y < user_click[1] + BLOCK_SIZE + 1)):
-                return True
 
         return False
 
@@ -134,12 +148,12 @@ class SnakeGame:
                 pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
             pygame.draw.rect(self.display, BLUE2,
                              pygame.Rect(pt.x+4, pt.y+4, 12, 12))
-
+        for obstacle in obstacles_list:
+            pygame.draw.rect(self.display, WHITE, pygame.Rect(
+                obstacle[0], obstacle[1], BLOCK_SIZE, BLOCK_SIZE))
         pygame.draw.rect(self.display, RED, pygame.Rect(
             self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
-        for click_position in user_cliks_arr:
-            pygame.draw.rect(self.display, WHITE, pygame.Rect(
-                click_position[0], click_position[1], BLOCK_SIZE, BLOCK_SIZE))
+
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])
         pygame.display.flip()
