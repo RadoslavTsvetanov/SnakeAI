@@ -54,7 +54,8 @@ class SnakeGameAI:
         self.food = None
         self._place_food()
         self.frame_iteration = 0
-        self.Barriers_button = Button(170, 70, self.display, self.w-190, 50)
+        self.Barriers_button = Button(
+            170, 70, self.display, self.w-190, 50, "clear barriers")
 
     def save_to_file(self, filename, arr):
         with open(filename, 'w') as f:
@@ -83,14 +84,15 @@ class SnakeGameAI:
         return coordinates_list
 
     def _place_food(self):
-        x
-        y
         while True:
-            x = random.randint(0, (self.w-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
-            y = random.randint(0, (self.h-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
+            x = random.randint(0, (self.w-BLOCK_SIZE - 200) //
+                               BLOCK_SIZE)*BLOCK_SIZE
+            y = random.randint(0, (self.h-BLOCK_SIZE - 200) //
+                               BLOCK_SIZE)*BLOCK_SIZE
             if not([x, y] in self.obstacles_list):
+                self.food = Point(x, y)
                 break
-        self.food = Point(x, y)
+
         if self.food in self.snake:
             self._place_food()
 
@@ -103,6 +105,9 @@ class SnakeGameAI:
                 quit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button
                 mouse_x, mouse_y = pygame.mouse.get_pos()
+                self.obstacles_list = self.Barriers_button.check_for_mouse_click(point={
+                    'x': mouse_x, 'y': mouse_y
+                }, arr=self.obstacles_list)
                 if(mouse_x < self.w - 200):
                     for i in range(0, self.w, 20):
                         if mouse_x < i:
@@ -121,6 +126,7 @@ class SnakeGameAI:
                     if(should_add):
                         mouse_pos = (mouse_x, mouse_y)
                         self.obstacles_list.append(mouse_pos)
+
         self._move(action)
         self.snake.insert(0, self.head)
 
