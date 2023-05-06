@@ -57,7 +57,6 @@ class SnakeGameAI:
         self.Barriers_button = Button(170, 70, self.display, self.w-190, 50)
 
     def save_to_file(self, filename, arr):
-        print("saving to file")
         with open(filename, 'w') as f:
             for i in arr:
                 f.write(str(i) + '\n')
@@ -108,8 +107,15 @@ class SnakeGameAI:
                         if mouse_y < i:
                             mouse_y = i - 20
                             break
-                    mouse_pos = (mouse_x, mouse_y)
-                    self.obstacles_list.append(mouse_pos)
+                    should_add = True
+                    for i in range(len(self.obstacles_list)):
+                        if self.obstacles_list[i][0] == mouse_x and self.obstacles_list[i][1] == mouse_y:
+                            self.obstacles_list.pop(i)
+                            should_add = False
+                            break
+                    if(should_add):
+                        mouse_pos = (mouse_x, mouse_y)
+                        self.obstacles_list.append(mouse_pos)
         self._move(action)
         self.snake.insert(0, self.head)
 
@@ -166,7 +172,8 @@ class SnakeGameAI:
                     obstacle[0], obstacle[1], BLOCK_SIZE, BLOCK_SIZE))
             pygame.draw.rect(self.display, RED, pygame.Rect(
                 self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
-
+        if(len(self.obstacles_list) > 0):
+            self.save_to_file("arr.txt", self.obstacles_list)
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])
         pygame.display.flip()
