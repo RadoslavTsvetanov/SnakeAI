@@ -5,10 +5,11 @@ from collections import namedtuple
 import pygame_gui
 from Button import Button
 import numpy as np
+from Buttons import Crash_button
 pygame.init()
 # font = pygame.font.Font('arial.ttf', 25)
 font = pygame.font.SysFont('arial', 25)
-crash_into_walls = False
+crash_into_walls = True
 
 
 class Direction(Enum):
@@ -39,6 +40,7 @@ class SnakeGameAI:
         pygame.display.set_caption('Snake')
         self.clock = pygame.time.Clock()
         self.reset(load_previous)
+        self.crash_into_walls = True
 
     def reset(self, load_previous):
 
@@ -56,6 +58,8 @@ class SnakeGameAI:
         self.frame_iteration = 0
         self.Barriers_button = Button(
             170, 70, self.display, self.w-190, 50, "clear barriers")
+        self.Crash_button = Crash_button(
+            x=self.w - 190, y=170, w=180, h=100, screen=self.display, text="Barriers", state=True)
 
     def save_to_file(self, filename, arr):
         with open(filename, 'w') as f:
@@ -108,6 +112,8 @@ class SnakeGameAI:
                 self.obstacles_list = self.Barriers_button.check_for_mouse_click(point={
                     'x': mouse_x, 'y': mouse_y
                 }, arr=self.obstacles_list)
+                self.crash_into_walls = self.Crash_button.check_for_click(
+                    mouse_click={'x': mouse_x, 'y': mouse_y})
                 if(mouse_x < self.w - 200):
                     for i in range(0, self.w, 20):
                         if mouse_x < i:
@@ -153,7 +159,7 @@ class SnakeGameAI:
         if pt is None:
             pt = self.head
         if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
-            if(crash_into_walls):
+            if(self.crash_into_walls):
                 return True
             self.head = Point(0, 0)
             return False
@@ -167,8 +173,10 @@ class SnakeGameAI:
         return False
 
     def _update_ui(self):
+        print(self.crash_into_walls)
         self.display.fill(BLACK)
         self.Barriers_button.draw_button()
+        self.Crash_button.draw()
         for pt in self.snake:
             pygame.draw.rect(self.display, BLUE1, pygame.Rect(
                 pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))

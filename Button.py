@@ -23,3 +23,4 @@ class Button():
         if point['x'] > self.x and point['x'] < self.x + self.w and point['y'] > self.y and point['y'] < self.y + self.h:
             return []
         return arr
+# drugite botoni shte izplolzvat nasledqvane ot Bazov klass
