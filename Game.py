@@ -10,6 +10,7 @@ from Buttons import Crash_button, Slider
 pygame.init()
 # font = pygame.font.Font('arial.ttf', 25)
 font = pygame.font.SysFont('arial', 25)
+SPEED = 40
 
 
 class Direction(Enum):
@@ -42,6 +43,10 @@ class SnakeGameAI:
         self.reset(load_previous)
         self.crash_into_walls = True
         self.speed = 40
+        self.slider = Slider(self.w - 100, 300, 70, 200,
+                             self.display, "slider", 300 + 40)  # 40 -> self.speed idk it does not work with self.speed
+        self.Crash_button = Crash_button(
+            x=self.w - 190, y=170, w=180, h=100, screen=self.display, text="Barriers", state=True)
 
     def reset(self, load_previous):
 
@@ -59,11 +64,6 @@ class SnakeGameAI:
         self.frame_iteration = 0
         self.Barriers_button = Button(
             170, 70, self.display, self.w-190, 50, "clear barriers")
-        self.Crash_button = Crash_button(
-            x=self.w - 190, y=170, w=180, h=100, screen=self.display, text="Barriers", state=True)
-
-        self.slider = Slider(self.w - 100, 300, 70, 200,
-                             self.display, "slider", 300 + 40)  # 40 -> self.speed idk it does not work with self.speed
 
     def save_to_file(self, filename, arr):
         with open(filename, 'w') as f:
@@ -100,7 +100,6 @@ class SnakeGameAI:
             if not([x, y] in self.obstacles_list):
                 self.food = Point(x, y)
                 break
-
         if self.food in self.snake:
             self._place_food()
 
@@ -118,7 +117,7 @@ class SnakeGameAI:
                 }, arr=self.obstacles_list)
                 self.crash_into_walls = self.Crash_button.check_for_click(
                     mouse_click={'x': mouse_x, 'y': mouse_y})
-                self.slider.check_for_click(
+                self.speed = self.slider.check_for_click(
                     mouse_click={'x': mouse_x, 'y': mouse_y})
                 if(mouse_x < self.w - 200):
                     for i in range(0, self.w, 20):
@@ -138,7 +137,7 @@ class SnakeGameAI:
                     if(should_add):
                         mouse_pos = (mouse_x, mouse_y)
                         self.obstacles_list.append(mouse_pos)
-
+        print(self.speed)
         self._move(action)
         self.snake.insert(0, self.head)
 
@@ -157,7 +156,7 @@ class SnakeGameAI:
             self.snake.pop()
 
         self._update_ui()
-        self.clock.tick(self.speed)
+        self.clock.tick(self.speed or 40)
 
         return reward, game_over, self.score
 
@@ -166,6 +165,7 @@ class SnakeGameAI:
             pt = self.head
         if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
             if(self.crash_into_walls):
+                print("crash")
                 return True
             self.head = Point(0, 0)
             return False
