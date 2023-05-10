@@ -35,6 +35,7 @@ SPEED = 40
 class SnakeGameAI:
 
     def __init__(self, w=840, h=600, load_previous=not True):
+        self.show_main_menu = True
         self.w = w
         self.h = h
         self.display = pygame.display.set_mode((self.w, self.h))
@@ -137,7 +138,6 @@ class SnakeGameAI:
                     if(should_add):
                         mouse_pos = (mouse_x, mouse_y)
                         self.obstacles_list.append(mouse_pos)
-        print(self.speed)
         self._move(action)
         self.snake.insert(0, self.head)
 
@@ -165,9 +165,8 @@ class SnakeGameAI:
             pt = self.head
         if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
             if(self.crash_into_walls):
-                print("crash")
                 return True
-            self.head = Point(0, 0)
+            self.head = Point(300, 300)
             return False
         for block in self.obstacles_list:
             block_object = Point(block[0], block[1])
