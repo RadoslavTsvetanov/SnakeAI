@@ -1,8 +1,12 @@
 import pygame
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+pygame.init()
+font = pygame.font.SysFont('arial', 25)
 
 
-class Button():
+class Button():  # button za barrieri
     def __init__(self, w, h, screen, x, y, text):
         self.screen = screen
         self.w = w
@@ -10,11 +14,15 @@ class Button():
         self.x = x
         self.y = y
         self.state = False
-        self.text = text
+        self.text = font.render(text, True, BLACK)
 
     def draw_button(self):
+
+        self.screen.blit(
+            self.text, [self.x + self.w//2 - 20, self.y + self.h//2 - 10])
         pygame.draw.rect(self.screen, WHITE, pygame.Rect(
             self.x, self.y, self.w, self.h))
+        self.screen.blit(self.text, [self.x, self.y])
 
     def return_state(self):
         return self.state

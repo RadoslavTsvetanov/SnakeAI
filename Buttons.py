@@ -1,27 +1,34 @@
 import pygame
 
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+pygame.init()
+font = pygame.font.SysFont('arial', 25)
 
 
-class Button():
+class Button():  # base class
     def __init__(self, x, y, w, h, screen, text):
         self.x = x
         self.y = y
-        self.w = w
-        self.h = h
+        self.width = w
+        self.height = h
         self.screen = screen
-        self.text = text
+        self.text = font.render(text, True, BLACK)
 
     def check_for_click(self, mouse_click):
-
-        if(mouse_click['x'] >= self.x and mouse_click['x'] <= self.x + self.w and mouse_click['y'] >= self.y and mouse_click['y'] <= self.y + self.h):
+        self.screen.blit(self.text, [self.x, self.y])
+        if(mouse_click['x'] >= self.x and mouse_click['x'] <= self.x + self.width and mouse_click['y'] >= self.y and mouse_click['y'] <= self.y + self.height):
             return self.action(mouse_click)  # slider
 
     def draw(self):
+
         pygame.draw.rect(self.screen, WHITE, pygame.Rect(
-            self.x, self.y, self.w, self.h))
+            self.x, self.y, self.width, self.height))
+        self.screen.blit(
+            self.text, [self.x + self.width//2 - 20, self.y + self.height//2 - 10])
         # self.screen.blit(
-        #    self.text, [self.x + (self.w)//2, self.y + (self.h)//2])
+        #    self.text, [self.x + (self.width)//2, self.y + (self.height)//2])
 
     def action(self, mouse_click):
         pass
@@ -52,4 +59,4 @@ class Slider(Button):
 
     def draw_circle(self):
         pygame.draw.circle(self.screen, (0, 0, 0),
-                           (self.x + (self.w//2), self.value), 20)
+                           (self.x + (self.width//2), self.value), 20)
