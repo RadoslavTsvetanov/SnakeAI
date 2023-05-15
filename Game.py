@@ -48,6 +48,8 @@ class SnakeGameAI:
                              self.display, "speed", 300 + 40)  # 40 -> self.speed idk it does not work with self.speed
         self.Crash_button = Crash_button(
             x=self.w - 190, y=170, w=180, h=100, screen=self.display, text="crash into walls", state=True)
+        self.Barriers_button = Button(
+            170, 70, self.display, self.w-190, 50, "clear barriers")
 
     def reset(self, load_previous):
 
@@ -63,8 +65,6 @@ class SnakeGameAI:
         self.food = None
         self._place_food()
         self.frame_iteration = 0
-        self.Barriers_button = Button(
-            170, 70, self.display, self.w-190, 50, "clear barriers")
 
     def save_to_file(self, filename, arr):
         with open(filename, 'w') as f:
@@ -163,7 +163,7 @@ class SnakeGameAI:
     def is_collision(self, pt=None):
         if pt is None:
             pt = self.head
-        if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
+        if pt.x > self.w - BLOCK_SIZE - 200 or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
             if(self.crash_into_walls):
                 return True
             self.head = Point(300, 300)
