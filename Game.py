@@ -42,7 +42,6 @@ class SnakeGameAI:
         pygame.display.set_caption('Snake')
         self.clock = pygame.time.Clock()
         self.reset(load_previous)
-        self.crash_into_walls = True
         self.speed = 40
         self.slider = Slider(self.w - 100, 300, 70, 200,
                              self.display, "speed", 300 + 40)  # 40 -> self.speed idk it does not work with self.speed
@@ -50,6 +49,7 @@ class SnakeGameAI:
             x=self.w - 190, y=170, w=180, h=100, screen=self.display, text="crash into walls", state=True)
         self.Barriers_button = Button(
             170, 70, self.display, self.w-190, 50, "clear barriers")
+        self.crash_into_walls = self.Barriers_button.return_state()
 
     def reset(self, load_previous):
 
