@@ -5,6 +5,7 @@ from collections import namedtuple
 import pygame_gui
 import pygame_widgets
 from Button import Button
+from MainMenu import MainMenu
 import numpy as np
 from Buttons import Crash_button, Slider
 pygame.init()
@@ -35,6 +36,7 @@ SPEED = 40
 class SnakeGameAI:
 
     def __init__(self, w=840, h=600, load_previous=not True):
+
         self.show_main_menu = True
         self.w = w
         self.h = h
@@ -50,6 +52,8 @@ class SnakeGameAI:
         self.Barriers_button = Button(
             170, 70, self.display, self.w-190, 50, "clear barriers")
         self.crash_into_walls = self.Barriers_button.return_state()
+        self.main_menu = MainMenu(self.display, self.w, self.h, 0, 0)
+        self.show_main_menu = self.main_menu.is_showed
 
     def reset(self, load_previous):
 
@@ -116,6 +120,10 @@ class SnakeGameAI:
                 self.obstacles_list = self.Barriers_button.check_for_mouse_click(point={
                     'x': mouse_x, 'y': mouse_y
                 }, arr=self.obstacles_list)
+                if self.show_main_menu:
+                    self.main_menu.check_for_click(
+                        mouse_click={'x': mouse_x, 'y': mouse_y})
+                    print("checking main menu")
                 self.crash_into_walls = self.Crash_button.check_for_click(
                     mouse_click={'x': mouse_x, 'y': mouse_y})
                 self.speed = self.slider.check_for_click(
@@ -202,6 +210,8 @@ class SnakeGameAI:
             self.save_to_file("arr.txt", self.obstacles_list)
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])
+        if self.show_main_menu:
+            self.main_menu.draw()
         pygame.display.flip()
 
     def _move(self, action):

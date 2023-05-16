@@ -34,7 +34,7 @@ class Button():  # base class
         pass
 
 
-class Crash_button(Button):
+class Crash_button(Button):  # for all kinds of buttons which just hold a state
     def __init__(self, x, y, w, h, screen, text, state):
         super().__init__(x, y, w, h, screen, text)
         self.state = state
