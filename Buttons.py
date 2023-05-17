@@ -1,5 +1,5 @@
 import pygame
-
+import os
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
@@ -8,7 +8,8 @@ font = pygame.font.SysFont('arial', 25)
 
 
 class Button():  # base class
-    def __init__(self, x, y, w, h, screen, text):
+    def __init__(self, x, y, w, h, screen, text, image_path="./images/start_btn.png"):
+        self.image_path = image_path
         self.x = x
         self.y = y
         self.width = w
@@ -29,14 +30,16 @@ class Button():  # base class
             self.text, [self.x + self.width//2 - 20, self.y + self.height//2 - 10])
         # self.screen.blit(
         #    self.text, [self.x + (self.width)//2, self.y + (self.height)//2])
+        self.screen.blit(pygame.transform.scale(pygame.image.load(
+            self.image_path), (self.width, self.height)), [self.x, self.y])
 
     def action(self, mouse_click):
         pass
 
 
 class Crash_button(Button):  # for all kinds of buttons which just hold a state
-    def __init__(self, x, y, w, h, screen, text, state):
-        super().__init__(x, y, w, h, screen, text)
+    def __init__(self, x, y, w, h, screen, text, state, image_path="./images/start_btn.png"):
+        super().__init__(x, y, w, h, screen, text, image_path)
         self.state = state
 
     def action(self, mouse_click):

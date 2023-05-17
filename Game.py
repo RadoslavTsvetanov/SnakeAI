@@ -52,7 +52,8 @@ class SnakeGameAI:
         self.Barriers_button = Button(
             170, 70, self.display, self.w-190, 50, "clear barriers", True)
         self.crash_into_walls = self.Barriers_button.return_state()
-        self.main_menu = MainMenu(self.display, self.w, self.h, 0, 0)
+        self.main_menu = MainMenu(
+            self.display, self.w - 600, self.h - 400, 300, 200, 300, 400)
         self.show_main_menu = self.main_menu.is_showed
         self.pause_button = Crash_button(
             0, 70, 50, 50, self.display, "pause", False)
