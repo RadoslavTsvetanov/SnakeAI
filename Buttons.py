@@ -41,7 +41,6 @@ class Crash_button(Button):  # for all kinds of buttons which just hold a state
 
     def action(self, mouse_click):
         self.state = not self.state
-        print(self.state)
         return self.state
 
 

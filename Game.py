@@ -50,10 +50,12 @@ class SnakeGameAI:
         self.Crash_button = Crash_button(
             x=self.w - 190, y=170, w=180, h=100, screen=self.display, text="crash into walls", state=True)
         self.Barriers_button = Button(
-            170, 70, self.display, self.w-190, 50, "clear barriers")
+            170, 70, self.display, self.w-190, 50, "clear barriers", True)
         self.crash_into_walls = self.Barriers_button.return_state()
         self.main_menu = MainMenu(self.display, self.w, self.h, 0, 0)
         self.show_main_menu = self.main_menu.is_showed
+        self.pause_button = Crash_button(
+            0, 70, 50, 50, self.display, "pause", False)
 
     def reset(self, load_previous):
 
@@ -115,12 +117,15 @@ class SnakeGameAI:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                self.pause_button.action(1)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 self.obstacles_list = self.Barriers_button.check_for_mouse_click(point={
                     'x': mouse_x, 'y': mouse_y
                 }, arr=self.obstacles_list)
-                if self.show_main_menu:
+
+                if self.main_menu.is_showed:
                     self.main_menu.check_for_click(
                         mouse_click={'x': mouse_x, 'y': mouse_y})
                     print("checking main menu")
@@ -146,8 +151,9 @@ class SnakeGameAI:
                     if(should_add):
                         mouse_pos = (mouse_x, mouse_y)
                         self.obstacles_list.append(mouse_pos)
-        self._move(action)
-        self.snake.insert(0, self.head)
+        if not self.pause_button.state:
+            self._move(action)
+            self.snake.insert(0, self.head)
 
         reward = 0
         game_over = False
@@ -188,6 +194,7 @@ class SnakeGameAI:
     def _update_ui(self):
 
         self.display.fill(BLACK)
+        self.pause_button.draw()
         self.slider.draw()
         self.slider.draw_circle()
         self.Barriers_button.draw_button()
@@ -210,7 +217,7 @@ class SnakeGameAI:
             self.save_to_file("arr.txt", self.obstacles_list)
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])
-        if self.show_main_menu:
+        if self.main_menu.is_showed:
             self.main_menu.draw()
         pygame.display.flip()
 

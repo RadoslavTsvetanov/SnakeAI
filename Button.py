@@ -7,13 +7,13 @@ font = pygame.font.SysFont('arial', 25)
 
 
 class Button():  # button za barrieri
-    def __init__(self, w, h, screen, x, y, text):
+    def __init__(self, w, h, screen, x, y, text, state):
         self.screen = screen
         self.w = w
         self.h = h
         self.x = x
         self.y = y
-        self.state = False
+        self.state = state
         self.text = font.render(text, True, BLACK)
 
     def draw_button(self):
