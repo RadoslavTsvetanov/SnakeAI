@@ -48,7 +48,7 @@ class SnakeGameAI:
         self.slider = Slider(self.w - 100, 300, 70, 200,
                              self.display, "speed", 300 + 40)  # 40 -> self.speed idk it does not work with self.speed
         self.Crash_button = Crash_button(
-            x=self.w - 190, y=170, w=180, h=100, screen=self.display, text="crash into walls", state=True)
+            x=self.w - 190, y=170, w=180, h=100, screen=self.display, text="crash into walls", state=True, image_path="./images/Untitled.png")
         self.Barriers_button = Button(
             170, 70, self.display, self.w-190, 50, "clear barriers", True)
         self.crash_into_walls = self.Barriers_button.return_state()
@@ -56,7 +56,7 @@ class SnakeGameAI:
             self.display, self.w - 600, self.h - 400, 300, 200, 300, 400)
         self.show_main_menu = self.main_menu.is_showed
         self.pause_button = Crash_button(
-            0, 70, 50, 50, self.display, "pause", False)
+            0, 70, 50, 50, self.display, "", False, "./images/pause.png")
 
     def reset(self, load_previous):
 
