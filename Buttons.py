@@ -62,9 +62,10 @@ class Slider(Button):
 
     def draw_circle(self):
         pygame.draw.circle(self.screen, (255, 255, 255),(self.x + self.width//2,self.y + 10),self.width//2)
+        pygame.draw.circle(self.screen, (255,255,255),(self.x + self.width//2,self.y + self.height + 10),self.width//2)
         pygame.draw.circle(self.screen, (0, 0, 0),
                            (self.x + (self.width//2), self.value), 20)
-        pygame.draw.circle(self.screen,(255,255,255),(self.x + self.width//2,self.y + self.height + 10),self.width//2)
+
 
     def draw_value(self):
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(

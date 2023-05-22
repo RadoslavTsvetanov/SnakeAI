@@ -36,7 +36,7 @@ SPEED = 40
 class SnakeGameAI:
 
     def __init__(self, w=840, h=600, load_previous=not True):
-
+        self.is_paused = False
         self.show_main_menu = True
         self.w = w
         self.h = h
@@ -152,9 +152,9 @@ class SnakeGameAI:
                     if(should_add):
                         mouse_pos = (mouse_x, mouse_y)
                         self.obstacles_list.append(mouse_pos)
-        if not self.pause_button.state:
-            self._move(action)
-            self.snake.insert(0, self.head)
+
+        self._move(action)
+        self.snake.insert(0, self.head)
 
         reward = 0
         game_over = False
@@ -193,7 +193,9 @@ class SnakeGameAI:
         return False
 
     def _update_ui(self):
-
+        if self.pause_button.state:
+            self.display.fill((255,255,255))
+            return
         self.display.fill(BLACK)
         self.pause_button.draw()
         self.slider.draw()
