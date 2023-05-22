@@ -30,7 +30,8 @@ class Button():  # base class
             self.text, [self.x + self.width//2 - 20, self.y + self.height//2 - 10])
         # self.screen.blit(
         #    self.text, [self.x + (self.width)//2, self.y + (self.height)//2])
-        self.screen.blit(pygame.transform.scale(pygame.image.load(
+        if self.image_path != "":
+            self.screen.blit(pygame.transform.scale(pygame.image.load(
             self.image_path), (self.width, self.height)), [self.x, self.y])
 
     def action(self, mouse_click):
@@ -48,8 +49,8 @@ class Crash_button(Button):  # for all kinds of buttons which just hold a state
 
 
 class Slider(Button):
-    def __init__(self, x, y, w, h, screen, text, value):
-        super().__init__(x, y, w, h, screen, text)
+    def __init__(self, x, y, w, h, screen, text, value, image_path):
+        super().__init__(x, y, w, h, screen, text, image_path)
         self.min = min
         self.max = max
         self.value = value
@@ -60,8 +61,10 @@ class Slider(Button):
         return mouse_click['y'] - self.y
 
     def draw_circle(self):
+        pygame.draw.circle(self.screen, (255, 255, 255),(self.x + self.width//2,self.y + 10),self.width//2)
         pygame.draw.circle(self.screen, (0, 0, 0),
                            (self.x + (self.width//2), self.value), 20)
+        pygame.draw.circle(self.screen,(255,255,255),(self.x + self.width//2,self.y + self.height + 10),self.width//2)
 
     def draw_value(self):
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(
