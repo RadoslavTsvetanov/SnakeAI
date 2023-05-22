@@ -19,7 +19,7 @@ class Button():  # base class
 
     def check_for_click(self, mouse_click):
         self.screen.blit(self.text, [self.x, self.y])
-        if(mouse_click['x'] >= self.x and mouse_click['x'] <= self.x + self.width and mouse_click['y'] >= self.y and mouse_click['y'] <= self.y + self.height):
+        if mouse_click['x'] >= self.x and mouse_click['x'] <= self.x + self.width and mouse_click['y'] >= self.y and mouse_click['y'] <= self.y + self.height:
             return self.action(mouse_click)  # slider
 
     def draw(self):
@@ -62,3 +62,8 @@ class Slider(Button):
     def draw_circle(self):
         pygame.draw.circle(self.screen, (0, 0, 0),
                            (self.x + (self.width//2), self.value), 20)
+
+    def draw_value(self):
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(
+            self.x - self.width, self.y + self.width//2, self.width, self.width))
+        self.screen.blit(font.render(str(self.value), True, BLACK), [self.x - self.width//2, self.y + self.width//2 + self.width//2])

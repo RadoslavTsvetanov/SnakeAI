@@ -198,6 +198,7 @@ class SnakeGameAI:
         self.pause_button.draw()
         self.slider.draw()
         self.slider.draw_circle()
+        self.slider.draw_value()
         self.Barriers_button.draw_button()
         self.Crash_button.draw()
         for pt in self.snake:
