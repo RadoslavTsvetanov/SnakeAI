@@ -125,7 +125,7 @@ class SnakeGameAI:
                 self.obstacles_list = self.Barriers_button.check_for_mouse_click(point={
                     'x': mouse_x, 'y': mouse_y
                 }, arr=self.obstacles_list)
-
+                self.pause_button.check_for_click(mouse_click={'x':mouse_x,'y':mouse_y})
                 if self.main_menu.is_showed:
                     self.main_menu.check_for_click(
                         mouse_click={'x': mouse_x, 'y': mouse_y})
@@ -134,7 +134,7 @@ class SnakeGameAI:
                     mouse_click={'x': mouse_x, 'y': mouse_y})
                 self.speed = self.slider.check_for_click(
                     mouse_click={'x': mouse_x, 'y': mouse_y})
-                if(mouse_x < self.w - 200):
+                if self.w - 200 > mouse_x > self.pause_button.width + 1:
                     for i in range(0, self.w, 20):
                         if mouse_x < i:
                             mouse_x = i - 20
