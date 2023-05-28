@@ -46,7 +46,7 @@ class SnakeGameAI:
         self.reset(load_previous)
         self.speed = 40
         self.slider = Slider(self.w - 100, 300, 70, 200,
-                             self.display, "speed", 300 + 40,"")  # 40 -> self.speed idk it does not work with self.speed
+                             self.display, "speed", 300 + 40, "")  # 40 -> self.speed idk it does not work with self.speed
         self.Crash_button = Crash_button(
             x=self.w - 190, y=170, w=180, h=100, screen=self.display, text="crash into walls", state=True, image_path="./images/Untitled.png")
         self.Barriers_button = Button(
@@ -120,12 +120,15 @@ class SnakeGameAI:
                 quit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 self.pause_button.action(1)
+                if self.pause_button.state:
+                    return
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 self.obstacles_list = self.Barriers_button.check_for_mouse_click(point={
                     'x': mouse_x, 'y': mouse_y
                 }, arr=self.obstacles_list)
-                self.pause_button.check_for_click(mouse_click={'x':mouse_x,'y':mouse_y})
+                self.pause_button.check_for_click(
+                    mouse_click={'x': mouse_x, 'y': mouse_y})
                 if self.main_menu.is_showed:
                     self.main_menu.check_for_click(
                         mouse_click={'x': mouse_x, 'y': mouse_y})
@@ -194,7 +197,7 @@ class SnakeGameAI:
 
     def _update_ui(self):
         if self.pause_button.state:
-            self.display.fill((255,255,255))
+            self.display.fill((255, 255, 255))
             return
         self.display.fill(BLACK)
         self.pause_button.draw()
