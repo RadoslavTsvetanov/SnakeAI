@@ -200,6 +200,8 @@ class SnakeGameAI:
             self.display.fill((255, 255, 255))
             return
         self.display.fill(BLACK)
+        self.display.blit(pygame.transform.scale(pygame.image.load(
+            "./Images/bg-game.jpg"), (self.w, self.h)), [0,0])
         self.pause_button.draw()
         self.slider.draw()
         self.slider.draw_circle()
@@ -218,6 +220,7 @@ class SnakeGameAI:
             for obstacle in self.obstacles_list:
                 pygame.draw.rect(self.display, WHITE, pygame.Rect(
                     obstacle[0], obstacle[1], BLOCK_SIZE, BLOCK_SIZE))
+                self.display.blit(pygame.transform.scale(pygame.image.load("./Images/brick.png"),(BLOCK_SIZE,BLOCK_SIZE)),[obstacle[0],obstacle[1]])
             pygame.draw.rect(self.display, RED, pygame.Rect(
                 self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
         if(len(self.obstacles_list) > 0):
