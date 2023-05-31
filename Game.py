@@ -218,9 +218,9 @@ class SnakeGameAI:
             self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
         if(len(self.obstacles_list) > 0):
             for obstacle in self.obstacles_list:
-                pygame.draw.rect(self.display, WHITE, pygame.Rect(
-                    obstacle[0], obstacle[1], BLOCK_SIZE, BLOCK_SIZE))
-                self.display.blit(pygame.transform.scale(pygame.image.load("./Images/brick.png"),(BLOCK_SIZE,BLOCK_SIZE)),[obstacle[0],obstacle[1]])
+                #pygame.draw.rect(self.display, WHITE, pygame.Rect(
+                 #   obstacle[0], obstacle[1], BLOCK_SIZE, BLOCK_SIZE))
+                self.display.blit(pygame.transform.scale(pygame.image.load("./Images/brick.png").convert_alpha(self.display),(BLOCK_SIZE,BLOCK_SIZE)),[obstacle[0],obstacle[1]])
             pygame.draw.rect(self.display, RED, pygame.Rect(
                 self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
         if(len(self.obstacles_list) > 0):
