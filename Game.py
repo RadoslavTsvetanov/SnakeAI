@@ -2,8 +2,6 @@ import pygame
 import random
 from enum import Enum
 from collections import namedtuple
-import pygame_gui
-import pygame_widgets
 from Button import Button
 from MainMenu import MainMenu
 import numpy as np
@@ -105,7 +103,7 @@ class SnakeGameAI:
                                BLOCK_SIZE)*BLOCK_SIZE
             y = random.randint(0, (self.h-BLOCK_SIZE - 200) //
                                BLOCK_SIZE)*BLOCK_SIZE
-            if not([x, y] in self.obstacles_list):
+            if not((x, y) in self.obstacles_list):
                 self.food = Point(x, y)
                 break
         if self.food in self.snake:
